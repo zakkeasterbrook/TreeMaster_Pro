@@ -14,7 +14,7 @@
 
 ---
 
-![TreeMaster Pro Screenshot](https://github.com/zakkeasterbrook/TreeMaster_Pro/blob/main/Screenshot%20(448).png?raw=true)
+![TreeMaster Pro Screenshot](https://github.com/zakkeasterbrook/TreeMaster_Pro/blob/main/Screenshot%20(450).png?raw=true)
 
 *Screenshot: TreeMaster Pro interface showcasing file structure management and integrated code editing.*
 
