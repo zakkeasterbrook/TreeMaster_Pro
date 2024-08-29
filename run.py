@@ -185,6 +185,9 @@ class TreeMasterPro(tk.Tk):
         if self.hover_timer:
             self.after_cancel(self.hover_timer)
             self.hover_timer = None
+            if self.hidden_signature_revealed:
+                self.title_label.config(text="TreeMaster Pro")  # Hide the hidden text
+                self.hidden_signature_revealed = False
 
     def reveal_hidden_signature(self):
         """Reveals the hidden signature."""
