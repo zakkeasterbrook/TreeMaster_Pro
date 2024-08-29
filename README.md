@@ -10,7 +10,7 @@ Temporary Save Feature: Temporarily save file changes before committing them to 
 Customizable: Supports different file types with corresponding icons.
 Dark Theme Interface: Modern dark theme for comfortable usage during long coding sessions.
 
-![TreeMaster Pro Screenshot](https://github.com/zakkeasterbrook/TreeMaster_Pro/blob/main/Screenshot%20(447).png?raw=true)
+![TreeMaster Pro Screenshot](https://github.com/zakkeasterbrook/TreeMaster_Pro/blob/main/Screenshot%20(448).png?raw=true)
 
 
 
