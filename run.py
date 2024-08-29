@@ -76,7 +76,7 @@ class TreeMasterPro(tk.Tk):
         self.hover_timer = None
 
         # Obfuscated Data Structure and Function
-        hidden_data = [90, 46, 84, 46, 69]  # ASCII values for 'Z.T.E'
+        hidden_data = [90, 46, 84, 46, 69] 
 
         def _decode_signature(data):
             # The function is obfuscated and never called, used only to store the hidden signature
