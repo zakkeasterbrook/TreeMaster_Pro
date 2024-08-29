@@ -3,6 +3,8 @@ from tkinter import ttk, simpledialog, messagebox, filedialog
 from tkinter.scrolledtext import ScrolledText
 from PIL import Image, ImageTk
 import os
+import keyword
+import re
 
 class TreeNode:
     def __init__(self, name, is_file=False):
@@ -60,11 +62,28 @@ class TreeMasterPro(tk.Tk):
         rename_btn.pack(side=tk.LEFT, padx=10)
 
         # Add title and instructions
-        title_label = tk.Label(header_frame, text="TreeMaster Pro", font=("Arial", 20, "bold"), fg="#00d0ff", bg="#1e1e1e")
-        title_label.pack(side=tk.LEFT, padx=10)
+        self.hidden_signature_revealed = False  # State for revealing the signature
+        self.title_label = tk.Label(header_frame, text="TreeMaster Pro", font=("Arial", 20, "bold"), fg="#00d0ff", bg="#1e1e1e")
+        self.title_label.pack(side=tk.LEFT, padx=10)
+        self.title_label.bind("<Enter>", self.start_hover_timer)
+        self.title_label.bind("<Leave>", self.cancel_hover_timer)
+
         instructions = tk.Label(self, text="Right-click or double-click on a file to edit or use the buttons below to manage the file tree.",
                                 font=("Arial", 10), fg="#ffffff", bg="#1e1e1e")
         instructions.pack(pady=5)
+
+        # Timer for revealing hidden text
+        self.hover_timer = None
+
+        # Obfuscated Data Structure and Function
+        hidden_data = [90, 46, 84, 46, 69]  # ASCII values for 'Z.T.E'
+
+        def _decode_signature(data):
+            # The function is obfuscated and never called, used only to store the hidden signature
+            return "".join(chr(x) for x in data)
+
+        # Encapsulate and hide the signature retrieval
+        signature = (lambda d: None)(_decode_signature(hidden_data))  # Encapsulation to prevent use
 
         # Button Frame
         button_frame = tk.Frame(self, bg="#1e1e1e")
@@ -120,7 +139,7 @@ class TreeMasterPro(tk.Tk):
         self.editor_frame.grid(row=0, column=1, sticky="nsew")
         self.text_area = ScrolledText(self.editor_frame, wrap=tk.WORD, font=("Courier New", 12), bg="#2b2b2b", fg="#ffffff")
         self.text_area.pack(expand=True, fill=tk.BOTH)
-        self.text_area.bind("<Control-s>", self.save_file_content)
+        self.text_area.bind("<KeyRelease>", self.syntax_highlight)
 
         # Treeview Styling
         style = ttk.Style(self)
@@ -156,6 +175,63 @@ class TreeMasterPro(tk.Tk):
         image = Image.open(path)
         image = image.resize(size, Image.LANCZOS)
         return ImageTk.PhotoImage(image)
+
+    def start_hover_timer(self, event):
+        """Starts a timer when the cursor hovers over the label."""
+        self.hover_timer = self.after(3000, self.reveal_hidden_signature)
+
+    def cancel_hover_timer(self, event):
+        """Cancels the timer if the cursor leaves the label."""
+        if self.hover_timer:
+            self.after_cancel(self.hover_timer)
+            self.hover_timer = None
+
+    def reveal_hidden_signature(self):
+        """Reveals the hidden signature."""
+        if not self.hidden_signature_revealed:
+            self.title_label.config(text="TreeMaster Pro Z.T.E")  # Reveals the hidden text
+            self.hidden_signature_revealed = True
+
+    def syntax_highlight(self, event=None):
+        """Applies syntax highlighting to the text editor."""
+        content = self.text_area.get("1.0", tk.END)
+        self.text_area.mark_set("range_start", "1.0")
+        data = content.split("\n")
+        for i, line in enumerate(data):
+            self.text_area.mark_set("range_start", f"{i + 1}.0")
+            self.text_area.mark_set("range_end", f"{i + 1}.end")
+            self.text_area.tag_remove("Keyword", f"{i + 1}.0", f"{i + 1}.end")
+            self.text_area.tag_remove("Function", f"{i + 1}.0", f"{i + 1}.end")
+            self.text_area.tag_remove("Comment", f"{i + 1}.0", f"{i + 1}.end")
+            self.text_area.tag_remove("String", f"{i + 1}.0", f"{i + 1}.end")
+
+            # Highlight Keywords
+            for kw in keyword.kwlist:
+                idx = line.find(kw)
+                while idx != -1:
+                    self.text_area.tag_add("Keyword", f"{i + 1}.{idx}", f"{i + 1}.{idx + len(kw)}")
+                    idx = line.find(kw, idx + 1)
+
+            # Highlight Function Definitions
+            function_matches = re.finditer(r"def\s+([a-zA-Z_][a-zA-Z_0-9]*)\s*\(", line)
+            for match in function_matches:
+                self.text_area.tag_add("Function", f"{i + 1}.{match.start()}", f"{i + 1}.{match.end()}")
+
+            # Highlight Comments
+            comment_start = line.find("#")
+            if comment_start != -1:
+                self.text_area.tag_add("Comment", f"{i + 1}.{comment_start}", f"{i + 1}.end")
+
+            # Highlight Strings
+            string_matches = re.finditer(r"(['\"])(?:(?=(\\?))\2.)*?\1", line)
+            for match in string_matches:
+                self.text_area.tag_add("String", f"{i + 1}.{match.start()}", f"{i + 1}.{match.end()}")
+
+        # Configure the colors for different tags
+        self.text_area.tag_configure("Keyword", foreground="#ff79c6")
+        self.text_area.tag_configure("Function", foreground="#50fa7b")
+        self.text_area.tag_configure("Comment", foreground="#6272a4")
+        self.text_area.tag_configure("String", foreground="#f1fa8c")
 
     def populate_tree(self):
         """Populates the treeview widget with the nodes."""
